@@ -1,12 +1,18 @@
 <template>
-  <div class="container"></div>
-  <ColumnList :list="list"></ColumnList>
+  <div class="container">
+    <Golbal-header :user="currentUser"></Golbal-header>
+    <ColumnList :list="list"></ColumnList>
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import ColumnList, { ColumnProps } from './components/ColumnList.vue'
+import GolbalHeader, { UserProps } from './components/GolbalHeader.vue'
+const currentUser: UserProps = {
+  isLogin: false
+},
 const testData: ColumnProps[] = [
   {
     id: 1,
@@ -63,14 +69,17 @@ const testData: ColumnProps[] = [
     avatar: 'http://vue-maker.oss-cn-hangzhou.aliyuncs.com/vue-marker/5ee22dd58b3c4520912b9470.jpg?x-oss-process=image/resize,m_pad,h_100,w_100'
   }
 ]
+
 export default defineComponent({
   name: 'App',
   components: {
-    ColumnList
+    ColumnList,
+    GolbalHeader
   },
   setup() {
     return {
-      list: testData
+      list: testData,
+      currentUser
     }
   }
 })
@@ -81,8 +90,5 @@ export default defineComponent({
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* text-align: center;
-  color: #2c3e50;
-  margin-top: 60px; */
 }
 </style>
