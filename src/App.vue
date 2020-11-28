@@ -2,7 +2,7 @@
   <div class="container">
     <Golbal-header :user="currentUser"></Golbal-header>
     <!-- <ColumnList :list="list"></ColumnList> -->
-    <form action="">
+    <validateForm @form-submit="onFormSubmit">
       <div class="mb-3">
         <label for="exampleInputEmail1" class="form-label">邮箱地址</label>
         <validate-input
@@ -21,7 +21,10 @@
           v-model="passwordVal"
         ></validate-input>
       </div>
-    </form>
+      <template v-slot:submit>
+        <span class="btn btn-danger">Submit</span>
+      </template>
+    </validateForm>
   </div>
 </template>
 
@@ -32,6 +35,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 // import ColumnList, { ColumnProps } from './components/ColumnList.vue'
 import GolbalHeader, { UserProps } from './components/GolbalHeader.vue'
 import ValidateInput, { RulesProp } from './components/VailidateInput.vue'
+import validateForm from './components/ValidateFrom.vue'
 
 const currentUser: UserProps = {
   isLogin: true,
@@ -99,7 +103,8 @@ export default defineComponent({
   components: {
     // ColumnList,
     GolbalHeader,
-    ValidateInput
+    ValidateInput,
+    validateForm
   },
 
   setup() {
@@ -109,13 +114,17 @@ export default defineComponent({
       { type: 'required', message: '电子邮箱地址不能为空' },
       { type: 'email', message: '请输入正确的电子邮箱格式' }
     ]
+    const onFormSubmit = (result: boolean) => {
+      console.log('1234', result)
+    }
 
     return {
       list: testData,
       currentUser,
       emailRules,
       emailVal,
-      passwordVal
+      passwordVal,
+      onFormSubmit
     }
   }
 })
