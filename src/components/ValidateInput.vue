@@ -1,5 +1,5 @@
 <template>
-  <div class="validate-input-container pb-3">
+  <div class="validate-input-container pb-3 position-relative">
     <input
       class="form-control"
       :class="{ 'is-invalid': inputRef.error }"
