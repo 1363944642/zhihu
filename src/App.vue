@@ -2,7 +2,7 @@
   <div class="container">
     <Golbal-header :user="currentUser"></Golbal-header>
     <!-- <ColumnList :list="list"></ColumnList> -->
-    <validateForm @form-submit="onFormSubmit">
+    <validateForm @form-submit="onFormSubmit" @from-empty="onFormempty">
       <div class="mb-3">
         <label for="exampleInputEmail1" class="form-label">邮箱地址</label>
         <validate-input
@@ -10,7 +10,6 @@
           v-model="emailVal"
           placeholder="请输入邮箱地址"
           type="text"
-          ref="inputRef"
         >
         </validate-input>
       </div>
@@ -23,9 +22,9 @@
           v-model="passwordVal"
         ></validate-input>
       </div>
-      <template v-slot:submit>
+      <!-- <template v-slot:submit>
         <span class="btn btn-danger">Submit</span>
-      </template>
+      </template> -->
     </validateForm>
   </div>
 </template>
@@ -109,10 +108,9 @@ export default defineComponent({
     validateForm
   },
 
-  setup() {
-    const inputRef = ref<any>()
-    const emailVal = ref('')
-    const passwordVal = ref('')
+  setup(props) {
+    const emailVal = ref()
+    const passwordVal = ref()
     const emailRules: RulesProp = [
       { type: 'required', message: '电子邮箱地址不能为空' },
       { type: 'email', message: '请输入正确的电子邮箱格式' }
@@ -131,8 +129,7 @@ export default defineComponent({
       passwordRules,
       emailVal,
       passwordVal,
-      onFormSubmit,
-      inputRef
+      onFormSubmit
     }
   }
 })
