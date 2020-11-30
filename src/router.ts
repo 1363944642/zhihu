@@ -8,12 +8,14 @@ import store from './store'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
+    name: 'home',
     component: Home
   },
   {
     path: '/login',
     name: 'login',
-    component: Login
+    component: Login,
+    meta: { redirectAlreadyLogin: true }
   },
   {
     path: '/column/:id',
@@ -23,7 +25,8 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/create',
     name: 'create',
-    component: CreatePost
+    component: CreatePost,
+    meta: { requiredLogin: true }
   }
 ]
 
@@ -33,8 +36,10 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.name !== 'login' && !store.state.user.isLogin) {
+  if (to.meta.requiredLogin && !store.state.user.isLogin) {
     next({ name: 'login' })
+  } else if (to.meta.redirectAlreadyLogin && store.state.user.isLogin) {
+    next({ name: 'home' })
   } else {
     next()
   }
