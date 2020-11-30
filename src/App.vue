@@ -7,14 +7,10 @@
 
 <script lang="ts">
 
-import { defineComponent } from 'vue'
+import { computed, defineComponent } from 'vue'
+import { useStore } from 'vuex'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import GolbalHeader, { UserProps } from './components/GolbalHeader.vue'
-
-const currentUser: UserProps = {
-  isLogin: true,
-  name: 'mil'
-}
 
 export default defineComponent({
   name: 'App',
@@ -23,6 +19,8 @@ export default defineComponent({
   },
 
   setup() {
+    const store = useStore()
+    const currentUser = computed(() => store.state.user)
     return {
       currentUser
     }
