@@ -10,7 +10,7 @@
 import { computed, defineComponent } from 'vue'
 import { useStore } from 'vuex'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import GolbalHeader, { UserProps } from './components/GolbalHeader.vue'
+import GolbalHeader from './components/GolbalHeader.vue'
 
 export default defineComponent({
   name: 'App',

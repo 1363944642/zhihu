@@ -31,7 +31,7 @@ import { defineComponent, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import ValidateInput, { RulesProp } from '../components/ValidateInput'
-import validateForm from '../components/ValidateFrom.vue'
+import validateForm from '../components/ValidateForm.vue'
 
 export default defineComponent({
   name: 'Login',
