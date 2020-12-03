@@ -1,4 +1,4 @@
-import { createStore } from 'vuex'
+import { createStore, Commit } from 'vuex'
 import axios from 'axios'
 export interface PostProps {
   _id: string;
@@ -31,6 +31,10 @@ interface ImageProps {
   url?: string;
   createdAt?: string;
 }
+const getAndCommit = async (url: string, mutationName: string, commit: Commit) => {
+  const { data } = await axios.get(url)
+  commit(mutationName, data)
+}
 
 const store = createStore<GlobalDataProps>({
   state: {
@@ -56,20 +60,18 @@ const store = createStore<GlobalDataProps>({
     }
   },
   actions: {
-    fetchColumns(context) {
-      axios.get('/columns').then(resp => {
-        context.commit('fatchColumns', resp.data)
-      })
+    // 1-1 封装后
+    fetchColumns({ commit }) {
+      getAndCommit('/columns', 'fatchColumns', commit)
     },
-    fetchColumn(context, cid) {
-      axios.get(`/columns/${cid}`).then(resp => {
-        context.commit('fetchColumn', resp.data)
-      })
+    // 1-1 正常写法 { commit } 为context.commit的对象结构写法 data为resp.data的对象结构写法
+    async fetchColumn({ commit }, cid) {
+      const { data } = await axios.get(`/columns/${cid}`)
+      commit('fetchColumn', data)
     },
-    fetchPosts(context, cid) {
-      axios.get(`/columns/${cid}/posts`).then(resp => {
-        context.commit('fetchPosts', resp.data)
-      })
+    async fetchPosts({ commit }, cid) {
+      const { data } = await axios.get(`/columns/${cid}/posts`)
+      commit('fetchPosts', data)
     }
   },
   getters: {
@@ -78,11 +80,6 @@ const store = createStore<GlobalDataProps>({
         return state.columns.find(item => item._id === id)
       }
     }
-    // getPostByCId(state) {
-    //   return (cid: string) => {
-    //     return state.posts.filter(item => item.column === cid)
-    //   }
-    // }
   }
 })
 

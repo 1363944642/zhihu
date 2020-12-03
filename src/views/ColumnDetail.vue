@@ -40,12 +40,6 @@ export default defineComponent({
       store.dispatch('fetchPosts', currentId)
     })
     const column = computed(() => store.getters.getColumnById(currentId))
-    // const list = computed(() => store.getters.getPostByCId(currentId))
-    // const column = computed(() => {
-    //   return store.state.columns.find((item) => {
-    //     return item._id === currentId
-    //   })
-    // })
     const list = computed(() => {
       return store.state.posts
     })
