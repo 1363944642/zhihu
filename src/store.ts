@@ -22,6 +22,7 @@ export interface ColumnProps {
   description: string;
 }
 export interface GlobalDataProps {
+  loading: boolean;
   columns: ColumnProps[];
   posts: PostProps[];
   user: UserProps;
@@ -38,6 +39,7 @@ const getAndCommit = async (url: string, mutationName: string, commit: Commit) =
 
 const store = createStore<GlobalDataProps>({
   state: {
+    loading: false,
     columns: [],
     posts: [],
     user: { isLogin: true, name: 'lostelk', columnId: 1 }
@@ -57,6 +59,9 @@ const store = createStore<GlobalDataProps>({
     },
     fetchPosts(state, rawData) {
       state.posts = rawData.data.list
+    },
+    setLoading(state, status) {
+      state.loading = status
     }
   },
   actions: {
@@ -64,15 +69,17 @@ const store = createStore<GlobalDataProps>({
     fetchColumns({ commit }) {
       getAndCommit('/columns', 'fatchColumns', commit)
     },
-    // 1-1 正常写法 { commit } 为context.commit的对象结构写法 data为resp.data的对象结构写法
-    async fetchColumn({ commit }, cid) {
-      const { data } = await axios.get(`/columns/${cid}`)
-      commit('fetchColumn', data)
+    fetchColumn({ commit }, cid) {
+      getAndCommit(`/columns/${cid}`, 'fetchColumn', commit)
     },
-    async fetchPosts({ commit }, cid) {
-      const { data } = await axios.get(`/columns/${cid}/posts`)
-      commit('fetchPosts', data)
+    fetchPosts({ commit }, cid) {
+      getAndCommit(`/columns/${cid}/posts`, 'fetchPosts', commit)
     }
+    // 1-1 正常写法 { commit } 为context.commit的对象结构写法 data为resp.data的对象结构写法
+    // async fetchColumn({ commit }, cid) {
+    //   const { data } = await axios.get(`/columns/${cid}`)
+    //   commit('fetchColumn', data)
+    // }
   },
   getters: {
     getColumnById(state) {

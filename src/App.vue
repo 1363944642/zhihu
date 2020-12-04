@@ -1,5 +1,6 @@
 <template>
   <Golbal-header :user="currentUser"></Golbal-header>
+  <h1 v-if="isLoading">loading....Ovo!!!</h1>
   <div class="container">
     <router-view></router-view>
   </div>
@@ -21,8 +22,10 @@ export default defineComponent({
   setup() {
     const store = useStore()
     const currentUser = computed(() => store.state.user)
+    const isLoading = computed(() => store.state.loading)
     return {
-      currentUser
+      currentUser,
+      isLoading
     }
   }
 })

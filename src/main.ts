@@ -15,6 +15,15 @@ axios.interceptors.request.use(config => {
   return config
 })
 
+axios.interceptors.request.use(config => {
+  store.commit('setLoading', true)
+  return config
+})
+axios.interceptors.response.use(config => {
+  store.commit('setLoading', false)
+  return config
+})
+
 // 应用路由
 app.use(appRouter)
 
