@@ -1,6 +1,10 @@
 <template>
   <Golbal-header :user="currentUser"></Golbal-header>
-  <h1 v-if="isLoading">loading....Ovo!!!</h1>
+  <Loader
+    v-if="isLoading"
+    text="加载中..."
+    background="rgba(0,0,0,0.8)"
+  ></Loader>
   <div class="container">
     <router-view></router-view>
   </div>
@@ -12,11 +16,13 @@ import { computed, defineComponent } from 'vue'
 import { useStore } from 'vuex'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import GolbalHeader from './components/GolbalHeader.vue'
+import Loader from './components/Loader.vue'
 
 export default defineComponent({
   name: 'App',
   components: {
-    GolbalHeader
+    GolbalHeader,
+    Loader
   },
 
   setup() {
