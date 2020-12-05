@@ -9,9 +9,17 @@ const app = createApp(App)
 
 // axiox
 axios.defaults.baseURL = 'http://apis.imooc.com/api/'
-
+// EF46985D7C85D229
+// 57951175B9EC3618
+// E47D035F540B0CD9
 axios.interceptors.request.use(config => {
   config.params = { ...config.params, icode: 'EF46985D7C85D229' }
+  config.data = { ...config.data, icode: 'EF46985D7C85D229' }
+  // if (config.data instanceof FormData) {
+  //   config.data.append('icode', 'EF46985D7C85D229')
+  // } else {
+  //   config.data = { ...config.data, icode: 'EF46985D7C85D229' }
+  // }
   return config
 })
 

@@ -22,6 +22,7 @@ export interface ColumnProps {
   description: string;
 }
 export interface GlobalDataProps {
+  token: string;
   loading: boolean;
   columns: ColumnProps[];
   posts: PostProps[];
@@ -36,18 +37,24 @@ const getAndCommit = async (url: string, mutationName: string, commit: Commit) =
   const { data } = await axios.get(url)
   commit(mutationName, data)
 }
+const postAndCommit = async (url: string, mutationName: string, commit: Commit, payload: unknown) => {
+  const { data } = await axios.post(url, payload)
+  commit(mutationName, data)
+  return data
+}
 
 const store = createStore<GlobalDataProps>({
   state: {
+    token: '',
     loading: false,
     columns: [],
     posts: [],
-    user: { isLogin: true, name: 'lostelk', columnId: 1 }
+    user: { isLogin: false, name: 'lostelk', columnId: 1 }
   },
   mutations: {
-    login(state) {
-      state.user = { ...state.user, isLogin: true, name: 'mil' }
-    },
+    // login(state) {
+    //   state.user = { ...state.user, isLogin: true, name: 'mil' }
+    // },
     createPost(state, newPost) {
       state.posts.push(newPost)
     },
@@ -62,9 +69,17 @@ const store = createStore<GlobalDataProps>({
     },
     setLoading(state, status) {
       state.loading = status
+    },
+    login(state, rawData) {
+      state.token = rawData.data.token
     }
   },
   actions: {
+    // 1-1 正常写法 { commit } 为context.commit的对象结构写法 data为resp.data的对象结构写法
+    // async fetchColumn({ commit }, cid) {
+    //   const { data } = await axios.get(`/columns/${cid}`)
+    //   commit('fetchColumn', data)
+    // }
     // 1-1 封装后
     fetchColumns({ commit }) {
       getAndCommit('/columns', 'fatchColumns', commit)
@@ -74,12 +89,18 @@ const store = createStore<GlobalDataProps>({
     },
     fetchPosts({ commit }, cid) {
       getAndCommit(`/columns/${cid}/posts`, 'fetchPosts', commit)
-    }
-    // 1-1 正常写法 { commit } 为context.commit的对象结构写法 data为resp.data的对象结构写法
-    // async fetchColumn({ commit }, cid) {
-    //   const { data } = await axios.get(`/columns/${cid}`)
-    //   commit('fetchColumn', data)
+    },
+
+    // 1-2 正常写法
+    // async login({ commit }, payload) {
+    //   const { data } = await axios.post('/user/login', payload)
+    //   commit('login', data)
+    //   // return data
     // }
+    // 1-2 封装后
+    login({ commit }, payload) {
+      return postAndCommit('/user/login', 'login', commit, payload)
+    }
   },
   getters: {
     getColumnById(state) {
