@@ -46,7 +46,7 @@ const postAndCommit = async (url: string, mutationName: string, commit: Commit, 
 
 const store = createStore<GlobalDataProps>({
   state: {
-    token: '',
+    token: localStorage.getItem('token') || '',
     loading: false,
     columns: [],
     posts: [],
@@ -73,7 +73,8 @@ const store = createStore<GlobalDataProps>({
     },
     login(state, rawData) {
       const { token } = rawData.data
-      state.token = rawData.data.token
+      state.token = token
+      localStorage.setItem('token', token)
       axios.defaults.headers.common.Authorization = `Bearer ${token}`
     },
     fetchCurrentUser(state, rawData) {
@@ -96,6 +97,9 @@ const store = createStore<GlobalDataProps>({
     fetchPosts({ commit }, cid) {
       getAndCommit(`/columns/${cid}/posts`, 'fetchPosts', commit)
     },
+    fetchCurrentUser({ commit }) {
+      getAndCommit('/user/current', 'fetchCurrentUser', commit)
+    },
 
     // 1-2 正常写法
     // async login({ commit }, payload) {
@@ -106,9 +110,6 @@ const store = createStore<GlobalDataProps>({
     // 1-2 封装后
     login({ commit }, payload) {
       return postAndCommit('/user/login', 'login', commit, payload)
-    },
-    fetchCurrentUser({ commit }) {
-      getAndCommit('/user/current', 'fetchCurrentUser', commit)
     },
     async loginAndFetch({ dispatch }, payload) {
       // return dispatch('login', payload).then(() => {
