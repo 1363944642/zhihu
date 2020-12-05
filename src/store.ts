@@ -9,11 +9,12 @@ export interface PostProps {
   createdAt: string;
   column: string;
 }
-interface UserProps {
+export interface UserProps {
   isLogin: boolean;
-  name?: string;
-  id?: number;
-  columnId?: number;
+  nickName?: string;
+  _id?: string;
+  column?: string;
+  email?: string;
 }
 export interface ColumnProps {
   _id: string;
@@ -49,7 +50,7 @@ const store = createStore<GlobalDataProps>({
     loading: false,
     columns: [],
     posts: [],
-    user: { isLogin: false, name: 'lostelk', columnId: 1 }
+    user: { isLogin: false }
   },
   mutations: {
     // login(state) {
@@ -71,7 +72,12 @@ const store = createStore<GlobalDataProps>({
       state.loading = status
     },
     login(state, rawData) {
+      const { token } = rawData.data
       state.token = rawData.data.token
+      axios.defaults.headers.common.Authorization = `Bearer ${token}`
+    },
+    fetchCurrentUser(state, rawData) {
+      state.user = { isLogin: true, ...rawData.data }
     }
   },
   actions: {
@@ -100,6 +106,16 @@ const store = createStore<GlobalDataProps>({
     // 1-2 封装后
     login({ commit }, payload) {
       return postAndCommit('/user/login', 'login', commit, payload)
+    },
+    fetchCurrentUser({ commit }) {
+      getAndCommit('/user/current', 'fetchCurrentUser', commit)
+    },
+    async loginAndFetch({ dispatch }, payload) {
+      // return dispatch('login', payload).then(() => {
+      //   dispatch('fetchCurrentUser')
+      // })
+      await dispatch('login', payload)
+      await dispatch('fetchCurrentUser')
     }
   },
   getters: {
