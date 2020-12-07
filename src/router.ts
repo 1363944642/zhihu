@@ -3,6 +3,7 @@ import Home from './views/Home.vue'
 import Login from './views/Login.vue'
 import ColumnDetail from './views/ColumnDetail.vue'
 import CreatePost from './views/CreatePost.vue'
+import Signup from './views/Signup.vue'
 import store from './store'
 
 const routes: Array<RouteRecordRaw> = [
@@ -27,6 +28,12 @@ const routes: Array<RouteRecordRaw> = [
     name: 'create',
     component: CreatePost,
     meta: { requiredLogin: true }
+  },
+  {
+    path: '/user',
+    name: 'user',
+    component: Signup,
+    meta: { requiredUser: true }
   }
 ]
 
@@ -38,6 +45,8 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   if (to.meta.requiredLogin && !store.state.user.isLogin) {
     next({ name: 'login' })
+  } else if (from.meta.requiredUser) {
+    next()
   } else if (to.meta.redirectAlreadyLogin && store.state.user.isLogin) {
     next({ name: 'home' })
   } else {

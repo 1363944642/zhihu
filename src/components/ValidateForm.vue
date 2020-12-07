@@ -19,14 +19,14 @@ export default defineComponent({
   emits: ['form-submit'],
   setup(props, context) {
     let funcArr: ValidateFunc[] = []
-    const submitForm = () => {
-      const result = funcArr.map(funcItem => funcItem()).every(mapItem => mapItem)
-      context.emit('form-submit', result)
-    }
     const callback = (func: ValidateFunc) => {
       funcArr.push(func)
     }
     emitter.on('from-item-created', callback)
+    const submitForm = () => {
+      const result = funcArr.map(funcItem => funcItem()).every(mapItem => mapItem)
+      context.emit('form-submit', result)
+    }
     onUnmounted(() => {
       emitter.off('from-item-created', callback)
       funcArr = []
