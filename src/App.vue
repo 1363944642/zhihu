@@ -1,5 +1,6 @@
 <template>
   <Golbal-header :user="currentUser"></Golbal-header>
+  <h1>{{ error.message }}</h1>
   <Loader
     v-if="isLoading"
     text="加载中..."
@@ -32,6 +33,7 @@ export default defineComponent({
     const currentUser = computed(() => store.state.user)
     const isLoading = computed(() => store.state.loading)
     const token = computed(() => store.state.token)
+    const error = computed(() => store.state.error)
     onMounted(() => {
       if (!currentUser.value.isLogin && token.value) {
         axios.defaults.headers.common.Authorization = `Bearer ${token.value}`
@@ -40,7 +42,8 @@ export default defineComponent({
     })
     return {
       currentUser,
-      isLoading
+      isLoading,
+      error
     }
   }
 })
