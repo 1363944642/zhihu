@@ -1,11 +1,11 @@
 <template>
   <Golbal-header :user="currentUser"></Golbal-header>
-  <h1>{{ error.message }}</h1>
   <Loader
     v-if="isLoading"
     text="加载中..."
     background="rgba(0,0,0,0.8)"
   ></Loader>
+  <Message type="error" :message="error.message" v-if="error.status"></Message>
   <div class="container">
     <router-view></router-view>
   </div>
@@ -19,13 +19,15 @@ import axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import GolbalHeader from './components/GolbalHeader.vue'
 import Loader from './components/Loader.vue'
+import Message from './components/Message.vue'
 import { GlobalDataProps } from './store'
 
 export default defineComponent({
   name: 'App',
   components: {
     GolbalHeader,
-    Loader
+    Loader,
+    Message
   },
 
   setup() {

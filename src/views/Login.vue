@@ -52,6 +52,7 @@ export default defineComponent({
       { type: 'required', message: '密码不能为空' }
     ]
     const onFormSubmit = (result: boolean) => {
+      store.state.isVisible = true
       if (result) {
         const payload = {
           email: emailVal.value,
