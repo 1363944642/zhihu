@@ -19,8 +19,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType } from 'vue'
-import { useStore } from 'vuex'
+import { defineComponent, PropType, ref } from 'vue'
 import useDOMCreate from '../hooks/useDOMCreate'
 export type MessageType = 'success' | 'error' | 'default'
 export default defineComponent({
@@ -33,18 +32,15 @@ export default defineComponent({
   },
   emits: ['close-message'],
   setup(props, context) {
-    const store = useStore()
     useDOMCreate('message')
-    const isVisible = computed(() => {
-      return store.state.isVisible
-    })
+    const isVisible = ref(true)
     const classObject = {
       'alert-success': props.type === 'success',
       'alert-danger': props.type === 'error',
       'alert-primary': props.type === 'default'
     }
     const hide = () => {
-      store.state.isVisible = false
+      isVisible.value = false
       context.emit('close-message', true)
     }
     return {

@@ -5,7 +5,7 @@
     text="加载中..."
     background="rgba(0,0,0,0.8)"
   ></Loader>
-  <Message type="error" :message="error.message" v-if="error.status"></Message>
+
   <div class="container">
     <router-view></router-view>
   </div>
@@ -13,21 +13,20 @@
 
 <script lang="ts">
 
-import { computed, defineComponent, onMounted } from 'vue'
+import { computed, defineComponent, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import GolbalHeader from './components/GolbalHeader.vue'
 import Loader from './components/Loader.vue'
-import Message from './components/Message.vue'
+import createMessage from './components/createMessage'
 import { GlobalDataProps } from './store'
 
 export default defineComponent({
   name: 'App',
   components: {
     GolbalHeader,
-    Loader,
-    Message
+    Loader
   },
 
   setup() {
@@ -40,6 +39,12 @@ export default defineComponent({
       if (!currentUser.value.isLogin && token.value) {
         axios.defaults.headers.common.Authorization = `Bearer ${token.value}`
         store.dispatch('fetchCurrentUser')
+      }
+    })
+    watch(() => error.value.status, () => {
+      const { status, message } = error.value
+      if (status && message) {
+        createMessage(message, 'error')
       }
     })
     return {

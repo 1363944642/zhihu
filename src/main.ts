@@ -32,6 +32,7 @@ axios.interceptors.request.use(config => {
 
 axios.interceptors.request.use(config => {
   store.commit('setLoading', true)
+  store.commit('setError', { status: false, message: '' })
   return config
 })
 axios.interceptors.response.use(config => {
@@ -41,7 +42,7 @@ axios.interceptors.response.use(config => {
   const { error } = e.response.data
   store.commit('setError', { status: true, message: error })
   store.commit('setLoading', false)
-  return Promise.reject(error)
+  return Promise.reject(e.response.data)
 })
 
 // 应用路由

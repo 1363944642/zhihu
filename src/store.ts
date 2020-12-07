@@ -23,7 +23,6 @@ export interface ColumnProps {
   description: string;
 }
 export interface GlobalDataProps {
-  isVisible: boolean;
   error: GlobalErrorProps;
   token: string;
   loading: boolean;
@@ -52,7 +51,6 @@ const postAndCommit = async (url: string, mutationName: string, commit: Commit, 
 
 const store = createStore<GlobalDataProps>({
   state: {
-    isVisible: true,
     error: { status: false },
     token: localStorage.getItem('token') || '',
     loading: false,
