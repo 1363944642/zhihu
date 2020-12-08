@@ -1,7 +1,8 @@
 <template>
   <div class="create-post-page">
     <h4>新建文章</h4>
-    <input type="file" name="file" @change.prevent="handleFileChange" />
+    <Uploader action="/upload/"></Uploader>
+    <!-- <input type="file" name="file" @change.prevent="handleFileChange" /> -->
     <validate-form @form-submit="onFormSubmit">
       <div class="mb-3">
         <label class="form-label">文章标题：</label>
@@ -35,14 +36,16 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { GlobalDataProps, PostProps } from '../store'
-import ValidateForm from '../components/ValidateForm'
-import ValidateInput from '../components/ValidateInput'
+import Uploader from '../components/Uploader.vue'
+import ValidateForm from '../components/ValidateForm.vue'
+import ValidateInput from '../components/ValidateInput.vue'
 
 export default defineComponent({
   name: 'CreatePost',
   components: {
     ValidateForm,
-    ValidateInput
+    ValidateInput,
+    Uploader
   },
   setup() {
     const router = useRouter()
@@ -69,30 +72,30 @@ export default defineComponent({
         }
       }
     }
-    const handleFileChange = (e: Event) => {
-      const target = e.target as HTMLInputElement
-      const files = target.files
-      if (files) {
-        const uploadeFile = files[0]
-        const formData = new FormData()
-        formData.append(uploadeFile.name, uploadeFile)
-        axios.post('/upload', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        }).then((resp) => {
-          console.log(resp)
-        })
-      }
-    }
+    // const handleFileChange = (e: Event) => {
+    //   const target = e.target as HTMLInputElement
+    //   const files = target.files
+    //   if (files) {
+    //     const uploadeFile = files[0]
+    //     const formData = new FormData()
+    //     formData.append(uploadeFile.name, uploadeFile)
+    //     axios.post('/upload', formData, {
+    //       headers: {
+    //         'Content-Type': 'multipart/form-data'
+    //       }
+    //     }).then((resp) => {
+    //       console.log(resp)
+    //     })
+    //   }
+    // }
 
     return {
       titleRules,
       contentRules,
       titleVal,
       contentVal,
-      onFormSubmit,
-      handleFileChange
+      onFormSubmit
+      // handleFileChange
     }
   }
 })
