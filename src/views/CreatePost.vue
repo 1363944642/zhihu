@@ -1,7 +1,7 @@
 <template>
   <div class="create-post-page">
     <h4>新建文章</h4>
-    <Uploader action="/upload/"></Uploader>
+    <Uploader action="/upload/" :beforeUpload="beforeUpload"></Uploader>
     <!-- <input type="file" name="file" @change.prevent="handleFileChange" /> -->
     <validate-form @form-submit="onFormSubmit">
       <div class="mb-3">
@@ -39,6 +39,7 @@ import { GlobalDataProps, PostProps } from '../store'
 import Uploader from '../components/Uploader.vue'
 import ValidateForm from '../components/ValidateForm.vue'
 import ValidateInput from '../components/ValidateInput.vue'
+import createMessage from '../components/createMessage'
 
 export default defineComponent({
   name: 'CreatePost',
@@ -72,6 +73,14 @@ export default defineComponent({
         }
       }
     }
+    const beforeUpload = (file: File) => {
+      const isPNG = file.type === 'image/png'
+      if (!isPNG) {
+        createMessage('上传图片只能是 PNG 格式!', 'error')
+      }
+      return isPNG
+    }
+
     // const handleFileChange = (e: Event) => {
     //   const target = e.target as HTMLInputElement
     //   const files = target.files
@@ -94,7 +103,8 @@ export default defineComponent({
       contentRules,
       titleVal,
       contentVal,
-      onFormSubmit
+      onFormSubmit,
+      beforeUpload
       // handleFileChange
     }
   }
