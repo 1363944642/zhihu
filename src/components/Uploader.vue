@@ -1,11 +1,19 @@
 <template>
   <div class="file-upload">
-    <button class="btn btn-primary" @click.prevent="triggerUpload">
-      <span v-if="fileStatus === 'ready'">点击上传</span>
-      <span v-if="fileStatus === 'loading'">正在上传...</span>
-      <span v-if="fileStatus === 'success'">上传成功</span>
-      <span v-if="fileStatus === 'error'">上传失败,请重试</span>
-    </button>
+    <div class="file-upload-container" @click.prevent="triggerUpload">
+      <slot v-if="fileStatus === 'ready'" name="ready">
+        <button class="btn btn-primary" disabled>点击上传</button>
+      </slot>
+      <slot v-if="fileStatus === 'loading'" name="loading">
+        <button class="btn btn-primary" disabled>正在上传...</button>
+      </slot>
+      <slot v-if="fileStatus === 'success'" name="success">
+        <button class="btn btn-primary" disabled>上传成功</button>
+      </slot>
+      <slot v-if="fileStatus === 'error'" name="error">
+        <button class="btn btn-primary" disabled>上传失败,请重试</button>
+      </slot>
+    </div>
     <input
       type="file"
       class="file-input d-none"
@@ -18,6 +26,7 @@
 <script lang="ts">
 import axios from 'axios'
 import { defineComponent, PropType, ref } from 'vue'
+
 type UploadStatus = 'ready' | 'loading' | 'success' | 'error'
 type CheckFunction = (file: File) => boolean
 export default defineComponent({

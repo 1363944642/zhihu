@@ -5,7 +5,12 @@
       action="/upload/"
       :beforeUpload="beforeUpload"
       @file-uploaded="onFileUploaded"
-    ></Uploader>
+    >
+      <template #loading>
+        <div class="spinner-border text-primary" role="status"></div>
+        <span class="text-primary small">上传中...</span>
+      </template>
+    </Uploader>
     <!-- <input type="file" name="file" @change.prevent="handleFileChange" /> -->
     <validate-form @form-submit="onFormSubmit">
       <div class="mb-3">
@@ -38,7 +43,6 @@
 import { defineComponent, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
 import { GlobalDataProps, PostProps, ResponseType, ImageProps } from '../store'
 import Uploader from '../components/Uploader.vue'
 import ValidateForm from '../components/ValidateForm.vue'
@@ -80,7 +84,7 @@ export default defineComponent({
     const beforeUpload = (file: File) => {
       const isPNG = file.type === 'image/png'
       if (!isPNG) {
-        // createMessage('上传图片只能是 PNG 格式!', 'error')
+        createMessage('上传图片只能是 PNG 格式!', 'error')
       }
       return isPNG
     }

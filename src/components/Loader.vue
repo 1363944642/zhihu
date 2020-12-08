@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onUnmounted } from 'vue'
+import { defineComponent } from 'vue'
 import useDOMCreate from '../hooks/useDOMCreate'
 
 export default defineComponent({
