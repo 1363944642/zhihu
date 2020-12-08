@@ -1,6 +1,7 @@
 <template>
   <div class="create-post-page">
     <h4>新建文章</h4>
+    <input type="file" name="file" @change.prevent="handleFileChange" />
     <validate-form @form-submit="onFormSubmit">
       <div class="mb-3">
         <label class="form-label">文章标题：</label>
@@ -32,6 +33,7 @@
 import { defineComponent, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
 import { GlobalDataProps, PostProps } from '../store'
 import ValidateForm from '../components/ValidateForm'
 import ValidateInput from '../components/ValidateInput'
@@ -55,18 +57,32 @@ export default defineComponent({
     ]
     const onFormSubmit = (result: boolean) => {
       if (result) {
-        const { columnId } = store.state.user
-        if (columnId) {
+        const { column } = store.state.user
+        if (column) {
           const newPost: PostProps = {
-            id: new Date().getTime(),
             title: titleVal.value,
             content: contentVal.value,
-            columnId: columnId,
-            createdAt: new Date().toLocaleString()
+            column
           }
           store.commit('createPost', newPost)
-          router.push({ name: 'column', params: { id: columnId } })
+          router.push({ name: 'column', params: { id: column } })
         }
+      }
+    }
+    const handleFileChange = (e: Event) => {
+      const target = e.target as HTMLInputElement
+      const files = target.files
+      if (files) {
+        const uploadeFile = files[0]
+        const formData = new FormData()
+        formData.append(uploadeFile.name, uploadeFile)
+        axios.post('/upload', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }).then((resp) => {
+          console.log(resp)
+        })
       }
     }
 
@@ -75,7 +91,8 @@ export default defineComponent({
       contentRules,
       titleVal,
       contentVal,
-      onFormSubmit
+      onFormSubmit,
+      handleFileChange
     }
   }
 })

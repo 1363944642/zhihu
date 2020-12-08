@@ -42,16 +42,16 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => {
-  if (to.meta.requiredLogin && !store.state.user.isLogin) {
-    next({ name: 'login' })
-  } else if (from.meta.requiredUser) {
-    next()
-  } else if (to.meta.redirectAlreadyLogin && store.state.user.isLogin) {
-    next({ name: 'home' })
-  } else {
-    next()
-  }
-})
+// router.beforeEach((to, from, next) => {
+//   if (to.meta.requiredLogin && !store.state.user.isLogin) {
+//     next({ name: 'login' })
+//   } else if (from.meta.requiredUser) {
+//     next()
+//   } else if (to.meta.redirectAlreadyLogin && store.state.user.isLogin) {
+//     next({ name: 'home' })
+//   } else {
+//     next()
+//   }
+// })
 
 export default router
