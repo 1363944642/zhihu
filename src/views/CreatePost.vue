@@ -10,6 +10,9 @@
         <div class="spinner-border text-primary" role="status"></div>
         <span class="text-primary small">上传中...</span>
       </template>
+      <template #success="dataProps">
+        <img :src="dataProps.uploadedData.data.url" width="500" />
+      </template>
     </Uploader>
     <!-- <input type="file" name="file" @change.prevent="handleFileChange" /> -->
     <validate-form @form-submit="onFormSubmit">
