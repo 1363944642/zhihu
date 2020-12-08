@@ -1,7 +1,11 @@
 <template>
   <div class="create-post-page">
     <h4>新建文章</h4>
-    <Uploader action="/upload/" :beforeUpload="beforeUpload"></Uploader>
+    <Uploader
+      action="/upload/"
+      :beforeUpload="beforeUpload"
+      @file-uploaded="onFileUploaded"
+    ></Uploader>
     <!-- <input type="file" name="file" @change.prevent="handleFileChange" /> -->
     <validate-form @form-submit="onFormSubmit">
       <div class="mb-3">
@@ -35,7 +39,7 @@ import { defineComponent, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
-import { GlobalDataProps, PostProps } from '../store'
+import { GlobalDataProps, PostProps, ResponseType, ImageProps } from '../store'
 import Uploader from '../components/Uploader.vue'
 import ValidateForm from '../components/ValidateForm.vue'
 import ValidateInput from '../components/ValidateInput.vue'
@@ -76,9 +80,13 @@ export default defineComponent({
     const beforeUpload = (file: File) => {
       const isPNG = file.type === 'image/png'
       if (!isPNG) {
-        createMessage('上传图片只能是 PNG 格式!', 'error')
+        // createMessage('上传图片只能是 PNG 格式!', 'error')
       }
       return isPNG
+    }
+
+    const onFileUploaded = (rawData: ResponseType<ImageProps>) => {
+      createMessage(`上传图片ID: ${rawData.data._id}`, 'success')
     }
 
     // const handleFileChange = (e: Event) => {
@@ -104,7 +112,8 @@ export default defineComponent({
       titleVal,
       contentVal,
       onFormSubmit,
-      beforeUpload
+      beforeUpload,
+      onFileUploaded
       // handleFileChange
     }
   }

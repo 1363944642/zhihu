@@ -1,5 +1,10 @@
 import { createStore, Commit } from 'vuex'
 import axios from 'axios'
+export interface ResponseType<P = {}> {
+  code: number;
+  msg: string;
+  data: P;
+}
 export interface PostProps {
   _id: string;
   title: string;
@@ -34,7 +39,7 @@ export interface GlobalErrorProps {
   status: boolean;
   message?: string;
 }
-interface ImageProps {
+export interface ImageProps {
   _id?: string;
   url?: string;
   createdAt?: string;

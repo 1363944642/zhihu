@@ -30,7 +30,8 @@ export default defineComponent({
       type: Function as PropType<CheckFunction>
     }
   },
-  setup(props) {
+  emits: ['file-uploaded', 'file-uploaded-error'],
+  setup(props, context) {
     const fileInput = ref(null)
     const fileStatus = ref<UploadStatus>('ready')
     const triggerUpload = () => {
@@ -54,10 +55,11 @@ export default defineComponent({
         axios.post(props.action, formData, {
           'Content-Type': 'multipart/form-data'
         }).then(resp => {
-          console.log(resp.data)
+          context.emit('file-uploaded', resp.data)
           fileStatus.value = 'success'
-        }).catch(() => {
+        }).catch((error) => {
           fileStatus.value = 'error'
+          context.emit('file-uploaded-error', { error })
         }).finally(() => {
           if (fileInput.value) {
             fileInput.value.value = ''

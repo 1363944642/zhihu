@@ -30,7 +30,7 @@ export default defineComponent({
       default: 'default'
     }
   },
-  emits: ['close-message'],
+  // emits: ['close-message'],
   setup(props, context) {
     useDOMCreate('message')
     const isVisible = ref(true)
@@ -41,7 +41,7 @@ export default defineComponent({
     }
     const hide = () => {
       isVisible.value = false
-      context.emit('close-message', true)
+      // context.emit('close-message', true)
     }
     return {
       classObject,
