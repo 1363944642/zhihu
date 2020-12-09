@@ -3,18 +3,23 @@
     <h4>新建文章</h4>
     <Uploader
       action="/upload/"
+      class="d-flex align-items-center justify-content-center bg-light text-secondary w-100 my-4"
       :beforeUpload="beforeUpload"
       @file-uploaded="onFileUploaded"
     >
+      <template #ready>
+        <h2>点击上传头图</h2>
+      </template>
       <template #loading>
-        <div class="spinner-border text-primary" role="status"></div>
-        <span class="text-primary small">上传中...</span>
+        <div class="d-flex">
+          <div class="spinner-border text-secondary" role="status"></div>
+          <h2>正在上传</h2>
+        </div>
       </template>
       <template #success="dataProps">
-        <img :src="dataProps.uploadedData.data.url" width="500" />
+        <img :src="dataProps.uploadedData.data.url" />
       </template>
     </Uploader>
-    <!-- <input type="file" name="file" @change.prevent="handleFileChange" /> -->
     <validate-form @form-submit="onFormSubmit">
       <div class="mb-3">
         <label class="form-label">文章标题：</label>
@@ -96,23 +101,6 @@ export default defineComponent({
       createMessage(`上传图片ID: ${rawData.data._id}`, 'success')
     }
 
-    // const handleFileChange = (e: Event) => {
-    //   const target = e.target as HTMLInputElement
-    //   const files = target.files
-    //   if (files) {
-    //     const uploadeFile = files[0]
-    //     const formData = new FormData()
-    //     formData.append(uploadeFile.name, uploadeFile)
-    //     axios.post('/upload', formData, {
-    //       headers: {
-    //         'Content-Type': 'multipart/form-data'
-    //       }
-    //     }).then((resp) => {
-    //       console.log(resp)
-    //     })
-    //   }
-    // }
-
     return {
       titleRules,
       contentRules,
@@ -121,8 +109,20 @@ export default defineComponent({
       onFormSubmit,
       beforeUpload,
       onFileUploaded
-      // handleFileChange
     }
   }
 })
 </script>
+
+<style>
+.create-post-page .file-upload-container {
+  height: 200px;
+  cursor: pointer;
+  overflow: hidden;
+}
+.create-post-page .file-upload-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+</style>
