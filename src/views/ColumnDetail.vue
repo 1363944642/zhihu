@@ -6,6 +6,7 @@
     >
       <div class="col-3 text-center">
         <img
+          v-if="column.avatar"
           :src="column.avatar.url"
           :alt="column.title"
           class="rounded-circle border w-100"
@@ -40,9 +41,10 @@ export default defineComponent({
       store.dispatch('fetchPosts', currentId)
     })
     const column = computed(() => store.getters.getColumnById(currentId))
-    const list = computed(() => {
-      return store.state.posts
-    })
+    // const list = computed(() => {
+    //   return store.state.posts
+    // })
+    const list = computed(() => store.getters.getPostsByCid(currentId))
     return {
       column,
       list

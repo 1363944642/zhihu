@@ -14,7 +14,6 @@ export function beforeUploadCheck(file: File, condition: CheckCondition) {
   if (!isValidSize) {
     error.push('size')
   }
-  console.log(error)
   return {
     passed: isValidFormat && isValidSize,
     error

@@ -10,9 +10,10 @@ export interface PostProps {
   title: string;
   excerpt?: string;
   content?: string;
-  image?: ImageProps;
+  image?: ImageProps | string;
   createdAt: string;
   column: string;
+  author?: string;
 }
 export interface UserProps {
   isLogin: boolean;
@@ -131,6 +132,9 @@ const store = createStore<GlobalDataProps>({
     login({ commit }, payload) {
       return postAndCommit('/user/login', 'login', commit, payload)
     },
+    createPost({ commit }, payload) {
+      return postAndCommit('/posts', 'createPost', commit, payload)
+    },
     async loginAndFetch({ dispatch }, payload) {
       // return dispatch('login', payload).then(() => {
       //   dispatch('fetchCurrentUser')
@@ -144,6 +148,9 @@ const store = createStore<GlobalDataProps>({
       return (id: string) => {
         return state.columns.find(item => item._id === id)
       }
+    },
+    getPostsByCid: (state) => (cid: string) => {
+      return state.posts.filter(post => post.column === cid)
     }
   }
 })

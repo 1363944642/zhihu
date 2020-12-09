@@ -5,7 +5,7 @@
       action="/upload/"
       class="d-flex align-items-center justify-content-center bg-light text-secondary w-100 my-4"
       :beforeUpload="uploadCheck"
-      @file-uploaded="onFileUploaded"
+      @file-uploaded="handleFileUploaded"
     >
       <template #ready>
         <h2>点击上传头图</h2>
@@ -69,6 +69,7 @@ export default defineComponent({
     const router = useRouter()
     const store = useStore<GlobalDataProps>()
     const titleVal = ref()
+    let imageId = ''
     const titleRules: RulesProp = [
       { type: 'required', message: '文章标题不能为空' }
     ]
@@ -76,24 +77,39 @@ export default defineComponent({
     const contentRules: RulesProp = [
       { type: 'required', message: '文章详情不能为空' }
     ]
+    const handleFileUploaded = (rawData: ResponseType<ImageProps>) => {
+      if (rawData.data._id) {
+        imageId = rawData.data._id
+      }
+    }
     const onFormSubmit = (result: boolean) => {
       if (result) {
-        const { column } = store.state.user
+        const { column, _id } = store.state.user
         if (column) {
           const newPost: PostProps = {
             title: titleVal.value,
             content: contentVal.value,
-            column
+            column,
+            author: _id
           }
+          if (imageId) {
+            newPost.image = imageId
+          }
+          store.dispatch('createPost', newPost).then(() => {
+            createMessage('发表成功, 2秒后跳转到文章页面', 'success', 2000)
+            setTimeout(() => {
+              router.push({ name: 'column', params: { id: column } })
+            }, 2000)
+          })
           store.commit('createPost', newPost)
           router.push({ name: 'column', params: { id: column } })
         }
       }
     }
 
-    const onFileUploaded = (rawData: ResponseType<ImageProps>) => {
-      createMessage(`上传图片ID: ${rawData.data._id}`, 'success')
-    }
+    // const onFileUploaded = (rawData: ResponseType<ImageProps>) => {
+    //   createMessage(`上传图片ID: ${rawData.data._id}`, 'success')
+    // }
     // const beforeUpload = (file: File) => {
     //   const isPNG = file.type === 'image/png'
     //   if (!isPNG) {
@@ -122,8 +138,9 @@ export default defineComponent({
       contentVal,
       onFormSubmit,
       // beforeUpload,
-      onFileUploaded,
-      uploadCheck
+      // onFileUploaded,
+      uploadCheck,
+      handleFileUploaded
     }
   }
 })
