@@ -47,6 +47,7 @@ export interface ImageProps {
 const getAndCommit = async (url: string, mutationName: string, commit: Commit) => {
   const { data } = await axios.get(url)
   commit(mutationName, data)
+  return data
 }
 const postAndCommit = async (url: string, mutationName: string, commit: Commit, payload: unknown) => {
   const { data } = await axios.post(url, payload)
@@ -93,6 +94,11 @@ const store = createStore<GlobalDataProps>({
     },
     setError(state, e: GlobalErrorProps) {
       state.error = e
+    },
+    logout(state) {
+      state.token = ''
+      localStorage.remove('tolen')
+      delete axios.defaults.headers.common.Authorization
     }
   },
   actions: {
@@ -103,16 +109,16 @@ const store = createStore<GlobalDataProps>({
     // }
     // 1-1 封装后
     fetchColumns({ commit }) {
-      getAndCommit('/columns', 'fatchColumns', commit)
+      return getAndCommit('/columns', 'fatchColumns', commit)
     },
     fetchColumn({ commit }, cid) {
-      getAndCommit(`/columns/${cid}`, 'fetchColumn', commit)
+      return getAndCommit(`/columns/${cid}`, 'fetchColumn', commit)
     },
     fetchPosts({ commit }, cid) {
-      getAndCommit(`/columns/${cid}/posts`, 'fetchPosts', commit)
+      return getAndCommit(`/columns/${cid}/posts`, 'fetchPosts', commit)
     },
     fetchCurrentUser({ commit }) {
-      getAndCommit('/user/current', 'fetchCurrentUser', commit)
+      return getAndCommit('/user/current', 'fetchCurrentUser', commit)
     },
 
     // 1-2 正常写法
