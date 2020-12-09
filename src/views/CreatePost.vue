@@ -4,7 +4,7 @@
     <Uploader
       action="/upload/"
       class="d-flex align-items-center justify-content-center bg-light text-secondary w-100 my-4"
-      :beforeUpload="beforeUpload"
+      :beforeUpload="uploadCheck"
       @file-uploaded="onFileUploaded"
     >
       <template #ready>
@@ -56,6 +56,7 @@ import Uploader from '../components/Uploader.vue'
 import ValidateForm from '../components/ValidateForm.vue'
 import ValidateInput from '../components/ValidateInput.vue'
 import createMessage from '../components/createMessage'
+import { beforeUploadCheck } from '../helper'
 
 export default defineComponent({
   name: 'CreatePost',
@@ -89,26 +90,40 @@ export default defineComponent({
         }
       }
     }
-    const beforeUpload = (file: File) => {
-      const isPNG = file.type === 'image/png'
-      if (!isPNG) {
-        createMessage('上传图片只能是 PNG 格式!', 'error')
-      }
-      return isPNG
-    }
 
     const onFileUploaded = (rawData: ResponseType<ImageProps>) => {
       createMessage(`上传图片ID: ${rawData.data._id}`, 'success')
     }
-
+    // const beforeUpload = (file: File) => {
+    //   const isPNG = file.type === 'image/png'
+    //   if (!isPNG) {
+    //     createMessage('上传图片只能是 PNG 格式!', 'error')
+    //   }
+    //   return isPNG
+    // }
+    const uploadCheck = (file: File) => {
+      const result = beforeUploadCheck(file, { format: ['image/jpeg', 'image/png'], size: 1 })
+      const { passed, error } = result
+      if (error.length !== 0) {
+        if (error.indexOf('format') > -1 && error.length === 1) {
+          createMessage('上传图片只能是 JPG/PNG 格式!', 'error')
+        } else if (error.indexOf('size') > -1 && error.length === 1) {
+          createMessage('上传图片大小不能超过 1MB', 'error')
+        } else {
+          createMessage('❎上传图片大小不能超过 1MB 并且 ❎上传图片只能是 JPG/PNG 格式!', 'error')
+        }
+      }
+      return passed
+    }
     return {
       titleRules,
       contentRules,
       titleVal,
       contentVal,
       onFormSubmit,
-      beforeUpload,
-      onFileUploaded
+      // beforeUpload,
+      onFileUploaded,
+      uploadCheck
     }
   }
 })
