@@ -19,8 +19,10 @@ export default defineComponent({
   emits: ['form-submit'],
   setup(props, context) {
     let funcArr: ValidateFunc[] = []
-    const callback = (func: ValidateFunc) => {
-      funcArr.push(func)
+    const callback = (func?: ValidateFunc) => {
+      if (func) {
+        funcArr.push(func)
+      }
     }
     emitter.on('from-item-created', callback)
     const submitForm = () => {

@@ -54,7 +54,7 @@ import { useRouter } from 'vue-router'
 import { GlobalDataProps, PostProps, ResponseType, ImageProps } from '../store'
 import Uploader from '../components/Uploader.vue'
 import ValidateForm from '../components/ValidateForm.vue'
-import ValidateInput from '../components/ValidateInput.vue'
+import ValidateInput, { RulesProp } from '../components/ValidateInput.vue'
 import createMessage from '../components/createMessage'
 import { beforeUploadCheck } from '../helper'
 

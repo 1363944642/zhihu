@@ -50,7 +50,7 @@ export default defineComponent({
   inheritAttrs: false,
   emits: ['file-uploaded', 'file-uploaded-error'],
   setup(props, context) {
-    const fileInput = ref(null)
+    const fileInput = ref<null | HTMLInputElement>(null)
     const fileStatus = ref<UploadStatus>('ready')
     const uploadedData = ref()
     const triggerUpload = () => {
@@ -72,7 +72,9 @@ export default defineComponent({
         const formData = new FormData()
         formData.append('file[0].name', files[0])
         axios.post(props.action, formData, {
-          'Content-Type': 'multipart/form-data'
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
         }).then(resp => {
           context.emit('file-uploaded', resp.data)
           fileStatus.value = 'success'

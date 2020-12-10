@@ -6,12 +6,12 @@ export interface ResponseType<P = {}> {
   data: P;
 }
 export interface PostProps {
-  _id: string;
+  _id?: string;
   title: string;
   excerpt?: string;
   content?: string;
   image?: ImageProps | string;
-  createdAt: string;
+  createdAt?: string;
   column: string;
   author?: string;
 }
@@ -25,7 +25,7 @@ export interface UserProps {
 export interface ColumnProps {
   _id: string;
   title: string;
-  avatar?: ImageProps | string;
+  avatar?: ImageProps | string | any;
   description: string;
 }
 export interface GlobalDataProps {
