@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar navbar-dark bg-primary justify-content-between mb-4 px-4">
     <div class="w-75 mx-auto navbar">
-      <a class="navbar-brand" href="#">知乎专栏</a>
+      <router-link to="/" class="navbar-brand" href="#">知乎专栏</router-link>
       <ul v-if="!user.isLogin" class="list-inline mb-0">
         <li class="list-inline-item">
           <router-link to="/Login" class="btn btn-outline-light my-2"
