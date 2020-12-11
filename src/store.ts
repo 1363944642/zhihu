@@ -13,7 +13,7 @@ export interface PostProps {
   image?: ImageProps;
   createdAt?: string;
   column: string;
-  author?: string;
+  author?: string | UserProps;
 }
 export interface UserProps {
   isLogin: boolean;

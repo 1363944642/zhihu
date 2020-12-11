@@ -24,6 +24,15 @@
         {{ currentPost.title }}
       </h1>
       <div v-html="currentPost.content"></div>
+      <div v-if="showEditArea" class="btn-group mt-5">
+        <router-link
+          :to="{ name: 'create', query: { id: currentPost._id } }"
+          type="button"
+          class="btn btn-success"
+          >编辑</router-link
+        >
+        <button type="button" class="btn btn-danger">删除</button>
+      </div>
     </article>
   </div>
 </template>
@@ -58,6 +67,15 @@ export default defineComponent({
     //   }
     // })
 
+    const showEditArea = computed(() => {
+      const { isLogin, _id } = store.state.user
+      if (currentPost.value && currentPost.value.author && isLogin) {
+        return currentPost.value.author._id === _id
+      } else {
+        return false
+      }
+    })
+
     const currentImageUrl = computed(() => {
       if (currentPost.value && currentPost.value.image) {
         const { image } = currentPost.value
@@ -70,7 +88,8 @@ export default defineComponent({
     return {
       currentPost,
       PostDetail,
-      currentImageUrl
+      currentImageUrl,
+      showEditArea
       // currentHTML
     }
   }
