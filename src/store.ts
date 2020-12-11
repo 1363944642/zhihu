@@ -10,7 +10,7 @@ export interface PostProps {
   title: string;
   excerpt?: string;
   content?: string;
-  image?: ImageProps | string;
+  image?: ImageProps;
   createdAt?: string;
   column: string;
   author?: string;
@@ -21,11 +21,13 @@ export interface UserProps {
   _id?: string;
   column?: string;
   email?: string;
+  avatar?: ImageProps;
+  description?: string;
 }
 export interface ColumnProps {
   _id: string;
   title: string;
-  avatar?: ImageProps | string | any;
+  avatar?: ImageProps;
   description: string;
 }
 export interface GlobalDataProps {
@@ -35,6 +37,7 @@ export interface GlobalDataProps {
   columns: ColumnProps[];
   posts: PostProps[];
   user: UserProps;
+  post: PostProps[];
 }
 export interface GlobalErrorProps {
   status: boolean;
@@ -63,7 +66,8 @@ const store = createStore<GlobalDataProps>({
     loading: false,
     columns: [],
     posts: [],
-    user: { isLogin: false }
+    user: { isLogin: false },
+    post: []
   },
   mutations: {
     // login(state) {
@@ -80,6 +84,9 @@ const store = createStore<GlobalDataProps>({
     },
     fetchPosts(state, rawData) {
       state.posts = rawData.data.list
+    },
+    fetchPost(state, rawData) {
+      state.post = rawData.data
     },
     setLoading(state, status) {
       state.loading = status
@@ -117,6 +124,9 @@ const store = createStore<GlobalDataProps>({
     },
     fetchPosts({ commit }, cid) {
       return getAndCommit(`/columns/${cid}/posts`, 'fetchPosts', commit)
+    },
+    fetchPost({ commit }, cid) {
+      return getAndCommit(`/posts/${cid}`, 'fetchPost', commit)
     },
     fetchCurrentUser({ commit }) {
       return getAndCommit('/user/current', 'fetchCurrentUser', commit)

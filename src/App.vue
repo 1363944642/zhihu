@@ -13,9 +13,8 @@
 
 <script lang="ts">
 
-import { computed, defineComponent, onMounted, watch } from 'vue'
+import { computed, defineComponent, watch } from 'vue'
 import { useStore } from 'vuex'
-import axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import GolbalHeader from './components/GolbalHeader.vue'
 import Loader from './components/Loader.vue'

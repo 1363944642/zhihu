@@ -3,7 +3,9 @@
     <article v-for="post in list" :key="post._id" class="card mb-3 shadow-sm">
       <div class="card-body">
         <h4>
-          {{ post.title }}
+          <router-link :to="`/posts/${post._id}/`">
+            {{ post.title }}
+          </router-link>
         </h4>
         <div class="row my-3 align-items-center">
           <div v-if="post.image" class="col-4">
@@ -36,3 +38,13 @@ export default defineComponent({
   }
 })
 </script>
+
+<style scoped>
+.post-list h4 a {
+  text-decoration: none;
+  color: #1a1a1a;
+}
+.post-list h4 a:hover {
+  color: #0d6efd;
+}
+</style>
