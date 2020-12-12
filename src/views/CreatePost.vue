@@ -2,6 +2,7 @@
   <div class="create-post-page">
     <h4>新建文章</h4>
     <Uploader
+      :uploaded="isEditModeUploadedData"
       action="/upload/"
       class="d-flex align-items-center justify-content-center bg-light text-secondary w-100 my-4"
       :beforeUpload="uploadCheck"
@@ -20,12 +21,14 @@
         <img :src="dataProps.uploadedData.data.url" />
       </template>
     </Uploader>
+    <h2>{{ titleVal }}</h2>
     <validate-form @form-submit="onFormSubmit">
       <div class="mb-3">
         <label class="form-label">文章标题：</label>
         <validate-input
           :rules="titleRules"
-          v-model="titleVal"
+          :modelValue="titleVal"
+          @update:model-value="titleVal = $event"
           placeholder="请输入文章标题"
           type="text"
         />
@@ -48,9 +51,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, onMounted } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { GlobalDataProps, PostProps, ResponseType, ImageProps } from '../store'
 import Uploader from '../components/Uploader.vue'
 import ValidateForm from '../components/ValidateForm.vue'
@@ -66,10 +69,14 @@ export default defineComponent({
     Uploader
   },
   setup() {
+    const isEditModeUploadedData = ref()
     const router = useRouter()
+    const route = useRoute()
+    const isEditMode = !!route.query.id
     const store = useStore<GlobalDataProps>()
     const titleVal = ref()
     let imageId = ''
+
     const titleRules: RulesProp = [
       { type: 'required', message: '文章标题不能为空' }
     ]
@@ -77,11 +84,27 @@ export default defineComponent({
     const contentRules: RulesProp = [
       { type: 'required', message: '文章详情不能为空' }
     ]
+
+    onMounted(() => {
+      if (isEditMode) {
+        store.dispatch('fetchPost', route.query.id).then(rawData => {
+          const currentPost = rawData.data
+          if (currentPost.image) {
+            isEditModeUploadedData.value = { data: currentPost.image }
+          }
+          titleVal.value = currentPost.title
+          console.log(titleVal.value)
+          contentVal.value = currentPost.content || ''
+        })
+      }
+    })
+
     const handleFileUploaded = (rawData: ResponseType<ImageProps>) => {
       if (rawData.data._id) {
         imageId = rawData.data._id
       }
     }
+
     const onFormSubmit = (result: boolean) => {
       if (result) {
         const { column, _id } = store.state.user
@@ -138,7 +161,8 @@ export default defineComponent({
       // beforeUpload,
       // onFileUploaded,
       uploadCheck,
-      handleFileUploaded
+      handleFileUploaded,
+      isEditModeUploadedData
     }
   }
 })
