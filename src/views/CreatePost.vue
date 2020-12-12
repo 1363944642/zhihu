@@ -1,6 +1,6 @@
 <template>
   <div class="create-post-page">
-    <h4>新建文章</h4>
+    <h4>{{ isEditMode ? "编辑文章" : "新建文章" }}</h4>
     <Uploader
       :uploaded="isEditModeUploadedData"
       action="/upload/"
@@ -21,7 +21,6 @@
         <img :src="dataProps.uploadedData.data.url" />
       </template>
     </Uploader>
-    <h2>{{ titleVal }}</h2>
     <validate-form @form-submit="onFormSubmit">
       <div class="mb-3">
         <label class="form-label">文章标题：</label>
@@ -44,7 +43,9 @@
         />
       </div>
       <template #submit>
-        <button class="btn btn-primary btn-large">发表文章</button>
+        <button class="btn btn-primary btn-large">
+          {{ isEditMode ? "更新文章" : "发表文章" }}
+        </button>
       </template>
     </validate-form>
   </div>
@@ -93,7 +94,6 @@ export default defineComponent({
             isEditModeUploadedData.value = { data: currentPost.image }
           }
           titleVal.value = currentPost.title
-          console.log(titleVal.value)
           contentVal.value = currentPost.content || ''
         })
       }
@@ -118,7 +118,9 @@ export default defineComponent({
           if (imageId) {
             newPost.image = imageId
           }
-          store.dispatch('createPost', newPost).then(() => {
+          const actionName = isEditMode ? 'updatePost' : 'createPost'
+          const sendData = isEditMode ? { id: route.query.id, payload: newPost } : newPost
+          store.dispatch(actionName, sendData).then(() => {
             createMessage('发表成功, 2秒后跳转到文章页面', 'success', 2000)
             setTimeout(() => {
               router.push({ name: 'column', params: { id: column } })
@@ -162,7 +164,8 @@ export default defineComponent({
       // onFileUploaded,
       uploadCheck,
       handleFileUploaded,
-      isEditModeUploadedData
+      isEditModeUploadedData,
+      isEditMode
     }
   }
 })

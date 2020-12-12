@@ -55,11 +55,11 @@ export default defineComponent({
     const postId = route.params.id
     // const md = new MarkdownIt()
 
+    const currentPost = computed(() => store.state.post)
+
     onMounted(() => {
       store.dispatch('fetchPost', postId)
     })
-
-    const currentPost = computed(() => store.state.post)
 
     // const currentHTML = computed(() => {
     //   if (currentPost.value && currentPost.value.content) {
