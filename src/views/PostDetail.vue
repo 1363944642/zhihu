@@ -31,27 +31,47 @@
           class="btn btn-success"
           >编辑</router-link
         >
-        <button type="button" class="btn btn-danger">删除</button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          @click.prevent="modalIsVisible = true"
+        >
+          删除
+        </button>
       </div>
     </article>
+    <modal
+      :title="删除文章"
+      :visible="modalIsVisible"
+      @modal-on-close="modalIsVisible = false"
+      @modal-on-confirm="hideAndDelete"
+    >
+      <p>确定要删除这篇文章吗?</p>
+    </modal>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted } from 'vue'
+import { computed, defineComponent, onMounted, ref } from 'vue'
 // import MarkdownIt from 'markdown-it'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import PostDetail from '../components/userProfile.vue'
+import Modal from '../components/Modal.vue'
+import createMessage from '../components/createMessage'
+import router from '../router'
 
 export default defineComponent({
   name: 'post-detail',
   components: {
-    PostDetail
+    PostDetail,
+    Modal
   },
   setup() {
     const store = useStore()
     const route = useRoute()
+    const router = useRouter()
+    const modalIsVisible = ref(false)
     const postId = route.params.id
     // const md = new MarkdownIt()
 
@@ -84,12 +104,24 @@ export default defineComponent({
         return null
       }
     })
+    const hideAndDelete = () => {
+      modalIsVisible.value = false
+      store.dispatch('deletePost', postId).then(rawData => {
+        createMessage('删除成功,2秒后跳转到专栏首页', 'success', 2000)
+        setTimeout(() => {
+          router.push(`/column/${rawData.data.column}`)
+        }, 2000)
+      })
+    }
 
     return {
       currentPost,
       PostDetail,
       currentImageUrl,
-      showEditArea
+      showEditArea,
+      Modal,
+      modalIsVisible,
+      hideAndDelete
       // currentHTML
     }
   }
