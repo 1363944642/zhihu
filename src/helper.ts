@@ -41,3 +41,27 @@ export function beforeUploadCheck(file: File, condition: CheckCondition) {
     error
   }
 }
+
+interface TestProps {
+  _id: string;
+  name: string;
+}
+const testData = [{ _id: '1', name: 'a' }, { _id: '2', name: 'b' }]
+
+export const arrToObj = <T>(arr: Array<T>) => {
+  return { ...arr }
+}
+const result = arrToObj(testData)
+console.log(result)
+
+export const objToArr = <T>(obj: { [key: string]: T }) => {
+  return Object.keys(obj).map(key => obj[key])
+}
+
+const testData2 = {
+  1: { _id: '1', name: 'a' },
+  2: { _id: '2', name: 'b' }
+}
+
+const aaa = objToArr(testData2)
+console.log(aaa)
