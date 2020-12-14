@@ -89,9 +89,10 @@ export default defineComponent({
     onMounted(() => {
       if (isEditMode) {
         store.dispatch('fetchPost', route.query.id).then(rawData => {
-          const currentPost = rawData.data
+          const currentPost = rawData.data || rawData
           if (currentPost.image) {
             isEditModeUploadedData.value = { data: currentPost.image }
+            console.log(isEditModeUploadedData.value)
           }
           titleVal.value = currentPost.title
           contentVal.value = currentPost.content || ''

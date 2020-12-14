@@ -11,10 +11,10 @@
         class="user-profile-component border-top border-bottom py-3 mb-5 align-items-center row g-0"
       >
         <div class="col">
-          <PostDetail
+          <userProfile
             :author="currentPost.author"
             v-if="currentPost.author"
-          ></PostDetail>
+          ></userProfile>
         </div>
         <span class="text-muted col text-right font-italic">
           发表于：{{ currentPost.createdAt }}
@@ -56,15 +56,14 @@ import { computed, defineComponent, onMounted, ref } from 'vue'
 // import MarkdownIt from 'markdown-it'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import PostDetail from '../components/userProfile.vue'
+import userProfile from '../components/userProfile.vue'
 import Modal from '../components/Modal.vue'
 import createMessage from '../components/createMessage'
-import router from '../router'
 
 export default defineComponent({
   name: 'post-detail',
   components: {
-    PostDetail,
+    userProfile,
     Modal
   },
   setup() {
@@ -75,7 +74,7 @@ export default defineComponent({
     const postId = route.params.id
     // const md = new MarkdownIt()
 
-    const currentPost = computed(() => store.state.post)
+    const currentPost = computed(() => store.getters.getPostByCid(postId)[0])
 
     onMounted(() => {
       store.dispatch('fetchPost', postId)
@@ -116,7 +115,7 @@ export default defineComponent({
 
     return {
       currentPost,
-      PostDetail,
+      userProfile,
       currentImageUrl,
       showEditArea,
       Modal,

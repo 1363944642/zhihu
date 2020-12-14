@@ -33,7 +33,7 @@ export default defineComponent({
     onMounted(() => {
       store.dispatch('fetchColumns')
     })
-    const list = computed(() => store.state.columns)
+    const list = computed(() => store.state.columns.data)
     return {
       list
     }

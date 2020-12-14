@@ -2,9 +2,9 @@
   <div class="user-profile-component">
     <div class="d-flex align-items-center">
       <img
-        :src="url"
+        :src="authorData"
         :alt="author.nickName"
-        class="rounded-circle img-thumbnail"
+        class="rounded-circle img-thumbnail author-img"
       />
       <div class="detail ml-2">
         <h6 class="d-block mb-0">{{ author.nickName }}</h6>
@@ -18,21 +18,30 @@
 
 <script lang="ts">
 import { defineComponent, computed } from 'vue'
-import { addColumnAvatar } from '../helper'
 
 export default defineComponent({
   props: {
     author: Object
   },
   setup(props) {
-    const url = computed(() => {
-      addColumnAvatar(props.author, 50, 50)
-      const { avatar } = props.author
-      return avatar && avatar.url
+    const authorData = computed(() => {
+      if (props.author && props.author.avatar) {
+        const { url } = props.author.avatar
+        return url
+      } else {
+        return require('@/assets/avatar.jpg')
+      }
     })
     return {
-      url
+      authorData
     }
   }
 })
 </script>
+
+<style scoped>
+.author-img {
+  width: 50px;
+  height: 50px;
+}
+</style>
