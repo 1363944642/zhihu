@@ -34,7 +34,7 @@ export interface GlobalDataProps {
   error: GlobalErrorProps;
   token: string;
   loading: boolean;
-  columns: { data: ColumnProps[]; isLoaded: boolean };
+  columns: { data: ColumnProps[]; isLoaded: boolean; page: number; totalPage: number };
   posts: { data: PostProps[]; loadedColumns: any };
   user: UserProps;
   post: { data: PostProps[]; loadedColumns: any };
@@ -73,7 +73,7 @@ const store = createStore<GlobalDataProps>({
     error: { status: false },
     token: localStorage.getItem('token') || '',
     loading: false,
-    columns: { data: [], isLoaded: false },
+    columns: { data: [], isLoaded: true, page: 1, totalPage: 0 },
     posts: { data: [], loadedColumns: [] },
     user: { isLogin: false },
     post: { data: [], loadedColumns: [] }
@@ -86,8 +86,9 @@ const store = createStore<GlobalDataProps>({
       state.posts.data.push(newPost)
     },
     fatchColumns(state, rawData) {
-      state.columns.data = rawData.data.list
-      state.columns.isLoaded = true
+      state.columns.data.push(...rawData.data.list)
+      state.columns.isLoaded = false
+      state.columns.page++
     },
     fetchColumn(state, rawData) {
       state.columns.data.push(rawData.data)
@@ -147,9 +148,10 @@ const store = createStore<GlobalDataProps>({
     //   commit('fetchColumn', data)
     // }
     // 1-1 封装后
-    fetchColumns({ state, commit }) {
-      if (!state.columns.isLoaded) {
-        return getAndCommit('/columns', 'fatchColumns', commit)
+    fetchColumns({ state, commit }, params = {}) {
+      const { size, isLoaded } = params
+      if (isLoaded) {
+        return asyncAbdCommit(`/columns?currentPage=${state.columns.page}&pageSize=${size}`, 'fatchColumns', commit, { method: 'get' })
       }
     },
     fetchColumn({ state, commit }, cid) {
@@ -219,6 +221,9 @@ const store = createStore<GlobalDataProps>({
     },
     getPostByCid: (state) => (cid: string) => {
       return state.post.data.filter(post => post._id === cid)
+    },
+    getColumnTotalPage: (state) => (cid: number) => {
+      state.columns.totalPage = cid
     }
   }
 })
