@@ -28,7 +28,7 @@
             <dropdown-item>
               <a href="#" class="dropdown-item">编辑资料</a>
             </dropdown-item>
-            <dropdown-item :disabled="true">
+            <dropdown-item @click="logout">
               <a href="#" class="dropdown-item">退出登陆</a>
             </dropdown-item>
           </dropdown>
@@ -42,7 +42,10 @@
 import { defineComponent, PropType } from 'vue'
 import Dropdown from './Driodown.vue'
 import DropdownItem from './DropdownItem.vue'
+import { useStore } from 'vuex'
 import { UserProps } from '../store'
+import { useRouter } from 'vue-router'
+import createMessage from '../components/createMessage'
 
 export default defineComponent({
   name: 'GolbalHeader',
@@ -54,6 +57,20 @@ export default defineComponent({
     user: {
       type: Object as PropType<UserProps>,
       required: true
+    }
+  },
+  setup() {
+    const store = useStore()
+    const router = useRouter()
+    const logout = () => {
+      store.commit('logout')
+      createMessage('退出成功 2秒后跳转首页', 'success')
+      setTimeout(() => {
+        router.push('/')
+      }, 2000)
+    }
+    return {
+      logout
     }
   }
 })
