@@ -18,6 +18,13 @@
       </div>
     </div>
     <post-list :list="list"></post-list>
+    <button
+      class="btn btn-outline-primary JiaZaiBtn mt-2 mb-5 mx-auto btn-block w-25"
+      @click="loadMorePage"
+      v-if="!isLastPage"
+    >
+      加载更多
+    </button>
   </div>
 </template>
 
@@ -36,19 +43,49 @@ export default defineComponent({
     const store = useStore<GlobalDataProps>()
     const route = useRoute()
     const currentId = route.params.id
+
+    const size = computed(() => store.state.postsSize)
+    const totalPage = computed(() => store.state.posts.totalPage)
+    const page = computed(() => store.state.posts.page)
+    const loadedColumns = computed(() => store.state.posts.loadedColumns)
+
     onMounted(() => {
       store.dispatch('fetchColumn', currentId)
-      store.dispatch('fetchPosts', currentId)
+
+      if (!loadedColumns.value.includes(currentId)) {
+        page.value = store.getters.initializePotsPage()
+        store.dispatch('fetchPosts', { cid: currentId, size: size.value }).then((data) => {
+          store.getters.getPotsTotalPage(Math.ceil(data.data.count / size.value))
+        })
+      }
     })
+
+    const loadMorePage = () => {
+      store.dispatch('fetchPosts', { cid: currentId, size: size.value }).then((data) => {
+        store.getters.getPotsTotalPage(Math.ceil(data.data.count / size.value))
+      })
+    }
+
+    const isLastPage = computed(() => {
+      return page.value > totalPage.value
+    })
+
     const column = computed(() => store.getters.getColumnById(currentId))
-    // const list = computed(() => {
-    //   return store.state.posts
-    // })
     const list = computed(() => store.getters.getPostsByCid(currentId))
+
     return {
       column,
-      list
+      list,
+      loadMorePage,
+      isLastPage
     }
   }
 })
 </script>
+
+<style scoped>
+.JiaZaiBtn {
+  display: flex;
+  justify-content: center;
+}
+</style>

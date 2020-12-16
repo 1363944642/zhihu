@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, onMounted, ref } from 'vue'
+import { defineComponent, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { GlobalDataProps } from '../store'
 import ColumnList from '../components/ColumnList.vue'
@@ -39,7 +39,7 @@ export default defineComponent({
   setup() {
     const store = useStore<GlobalDataProps>()
 
-    const size = ref(3)
+    const size = computed(() => store.state.ColumnsSize)
 
     const totalPage = computed(() => store.state.columns.totalPage)
 

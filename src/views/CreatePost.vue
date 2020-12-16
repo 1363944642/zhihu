@@ -52,7 +52,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue'
+import { defineComponent, ref, onMounted, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
 import { GlobalDataProps, PostProps, ResponseType, ImageProps } from '../store'
@@ -76,6 +76,7 @@ export default defineComponent({
     const isEditMode = !!route.query.id
     const store = useStore<GlobalDataProps>()
     const titleVal = ref()
+    const size = computed(() => store.state.postsSize)
     let imageId = ''
 
     const titleRules: RulesProp = [
@@ -121,9 +122,12 @@ export default defineComponent({
           }
           const actionName = isEditMode ? 'updatePost' : 'createPost'
           const sendData = isEditMode ? { id: route.query.id, payload: newPost } : newPost
-          store.dispatch(actionName, sendData).then(() => {
+          store.dispatch(actionName, sendData).then((rawData) => {
             createMessage('发表成功, 2秒后跳转到文章页面', 'success', 2000)
             setTimeout(() => {
+              store.dispatch('fetchPosts', { cid: rawData.data.column, size: size.value, createPost: true }).then((data) => {
+                store.getters.getPotsTotalPage(Math.ceil(data.data.count / size.value))
+              })
               router.push({ name: 'column', params: { id: column } })
             }, 2000)
           })

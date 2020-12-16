@@ -35,9 +35,12 @@ export interface GlobalDataProps {
   token: string;
   loading: boolean;
   columns: { data: ColumnProps[]; isLoaded: boolean; page: number; totalPage: number };
-  posts: { data: PostProps[]; loadedColumns: any };
+  column: { data: ColumnProps[]; loadedColumns: any };
+  posts: { data: PostProps[]; loadedColumns: any; page: number; totalPage: number };
   user: UserProps;
   post: { data: PostProps[]; loadedColumns: any };
+  postsSize: number;
+  ColumnsSize: number;
 }
 export interface GlobalErrorProps {
   status: boolean;
@@ -74,9 +77,12 @@ const store = createStore<GlobalDataProps>({
     token: localStorage.getItem('token') || '',
     loading: false,
     columns: { data: [], isLoaded: true, page: 1, totalPage: 0 },
-    posts: { data: [], loadedColumns: [] },
+    column: { data: [], loadedColumns: [] },
+    posts: { data: [], loadedColumns: [], page: 1, totalPage: 0 },
     user: { isLogin: false },
-    post: { data: [], loadedColumns: [] }
+    post: { data: [], loadedColumns: [] },
+    postsSize: 5,
+    ColumnsSize: 3
   },
   mutations: {
     // login(state) {
@@ -90,12 +96,14 @@ const store = createStore<GlobalDataProps>({
       state.columns.isLoaded = false
       state.columns.page++
     },
-    fetchColumn(state, rawData) {
-      state.columns.data.push(rawData.data)
+    fetchColumn(state, { data, extraData }) {
+      state.column.data.push(data.data)
+      state.column.loadedColumns.push(extraData)
     },
     fetchPosts(state, { data, extraData }) {
       state.posts.data = [...state.posts.data, ...data.data.list]
       state.posts.loadedColumns.push(extraData)
+      state.posts.page++
     },
     fetchPost(state, { data, extraData }) {
       state.post.data.push(data.data)
@@ -118,7 +126,12 @@ const store = createStore<GlobalDataProps>({
       })
     },
     deletePost(state, rawData) {
-      state.posts.data = state.posts.data.filter(post => post._id !== rawData.data._id)
+      state.posts.data.forEach((item, index) => {
+        if (item._id === rawData.data._id) {
+          state.posts.data.splice(index)
+        }
+      })
+      // state.posts.data = state.posts.data.filter(post => post._id !== rawData.data._id)
     },
     setLoading(state, status) {
       state.loading = status
@@ -155,17 +168,30 @@ const store = createStore<GlobalDataProps>({
       }
     },
     fetchColumn({ state, commit }, cid) {
-      if (!state.columns.data.some(data => data._id === cid)) {
-        return getAndCommit(`/columns/${cid}`, 'fetchColumn', commit)
+      if (!state.column.loadedColumns.includes(cid)) {
+        return asyncAbdCommit(`/columns/${cid}`, 'fetchColumn', commit, { method: 'get' }, cid)
       }
     },
-    fetchPosts({ state, commit }, cid) {
-      if (state.posts.data.length < 5) {
+    fetchPosts({ state, commit }, params = {}) {
+      const { cid, size, deletePost, createPost } = params
+      if (deletePost) {
         state.posts.data = []
-        return asyncAbdCommit(`/columns/${cid}/posts`, 'fetchPosts', commit, { method: 'get' }, cid)
-      } else if (!state.posts.loadedColumns.includes(cid)) {
-        return asyncAbdCommit(`/columns/${cid}/posts`, 'fetchPosts', commit, { method: 'get' }, cid)
+        state.posts.page = state.posts.page - 1
+        return asyncAbdCommit(`/columns/${cid}/posts?pageSize=${state.posts.page * size}`, 'fetchPosts', commit, { method: 'get' }, cid)
+      } else if (createPost) {
+        state.posts.data = []
+        state.posts.page = state.posts.page - 1
+        return asyncAbdCommit(`/columns/${cid}/posts?pageSize=${state.posts.page * size}`, 'fetchPosts', commit, { method: 'get' }, cid)
+      } else {
+        return asyncAbdCommit(`/columns/${cid}/posts?currentPage=${state.posts.page}&pageSize=${size}`, 'fetchPosts', commit, { method: 'get' }, cid)
       }
+
+      // if (state.posts.data.length < 5) {
+      //   state.posts.data = []
+      //   return asyncAbdCommit(`/columns/${cid}/posts`, 'fetchPosts', commit, { method: 'get' }, cid)
+      // } else if (!state.posts.loadedColumns.includes(cid)) {
+      //   return asyncAbdCommit(`/columns/${cid}/posts`, 'fetchPosts', commit, { method: 'get' }, cid)
+      // }
     },
     fetchPost({ state, commit }, cid) {
       if (!state.post.loadedColumns.includes(cid)) {
@@ -213,7 +239,7 @@ const store = createStore<GlobalDataProps>({
   getters: {
     getColumnById(state) {
       return (id: string) => {
-        return state.columns.data.find(item => item._id === id)
+        return state.column.data.find(item => item._id === id)
       }
     },
     getPostsByCid: (state) => (cid: string) => {
@@ -222,8 +248,14 @@ const store = createStore<GlobalDataProps>({
     getPostByCid: (state) => (cid: string) => {
       return state.post.data.filter(post => post._id === cid)
     },
-    getColumnTotalPage: (state) => (cid: number) => {
-      state.columns.totalPage = cid
+    getColumnTotalPage: (state) => (TotalPage: number) => {
+      state.columns.totalPage = TotalPage
+    },
+    getPotsTotalPage: (state) => (TotalPage: number) => {
+      state.posts.totalPage = TotalPage
+    },
+    initializePotsPage: (state) => () => {
+      state.posts.page = 1
     }
   }
 })

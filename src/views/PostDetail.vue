@@ -71,6 +71,7 @@ export default defineComponent({
     const route = useRoute()
     const router = useRouter()
     const modalIsVisible = ref(false)
+    const size = computed(() => store.state.postsSize)
     const postId = route.params.id
     // const md = new MarkdownIt()
 
@@ -105,9 +106,10 @@ export default defineComponent({
     })
     const hideAndDelete = () => {
       modalIsVisible.value = false
-      store.dispatch('deletePost', postId).then(rawData => {
+      store.dispatch('deletePost', postId).then((rawData) => {
         createMessage('删除成功,2秒后跳转到专栏首页', 'success', 2000)
         setTimeout(() => {
+          store.dispatch('fetchPosts', { cid: rawData.data.column, size: size.value, deletePost: true })
           router.push(`/column/${rawData.data.column}`)
         }, 2000)
       })
