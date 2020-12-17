@@ -44,7 +44,7 @@ axios.interceptors.response.use(config => {
   store.commit('setLoading', false)
   return Promise.reject(e.response.data)
 })
-
+document.title = '迷路专栏'
 // 应用路由
 app.use(appRouter)
 
