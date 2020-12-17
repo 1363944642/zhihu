@@ -108,11 +108,11 @@ export default defineComponent({
     const hideAndDelete = () => {
       modalIsVisible.value = false
       store.dispatch('deletePost', postId).then((rawData) => {
-        createMessage('删除成功,1秒后跳转到专栏首页', 'success', 1000)
+        createMessage('删除成功,2秒后跳转到专栏首页', 'success', 2000)
         setTimeout(() => {
           store.dispatch('fetchPosts', { cid: rawData.data.column, size: size.value, deletePost: true })
           router.push(`/column/${rawData.data.column}`)
-        }, 1000)
+        }, 2000)
       })
     }
 

@@ -71,7 +71,7 @@ export default defineComponent({
     const router = useRouter()
     const logout = () => {
       store.commit('logout')
-      createMessage('退出成功 1秒后跳转首页', 'success')
+      createMessage('退出成功 2秒后跳转首页', 'success')
       setTimeout(() => {
         router.push('/')
       }, 1000)

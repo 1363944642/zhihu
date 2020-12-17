@@ -17,11 +17,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue'
-
+import { defineComponent, computed, PropType } from 'vue'
+import { UserProps } from '../store'
 export default defineComponent({
   props: {
-    author: Object
+    author: {
+      type: Object as PropType<UserProps>,
+      required: true
+    }
   },
   setup(props) {
     const authorData = computed(() => {

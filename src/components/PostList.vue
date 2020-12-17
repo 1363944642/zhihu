@@ -27,12 +27,12 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { PostProps } from '../store'
+import { PostProps, ImageProps } from '../store'
 
 export default defineComponent({
   props: {
     list: {
-      type: Array as PropType<PostProps[]>,
+      type: Array as PropType<PostProps[] | ImageProps>,
       required: true
     }
   }

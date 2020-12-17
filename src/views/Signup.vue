@@ -1,6 +1,6 @@
 <template>
   <div class="signup-page mx-auto p-3 w-330">
-    <h5 class="my-4 text-center">注册者也账户</h5>
+    <h5 class="my-4 text-center">注册迷路专栏</h5>
     <validate-form @form-submit="onFormSubmit">
       <div class="mb-3">
         <label class="form-label">邮箱地址</label>
@@ -21,7 +21,9 @@
         />
       </div>
       <div class="mb-3">
-        <label class="form-label">密码</label>
+        <label class="form-label"
+          >密码<span class="password-lenght"> (密码长度最小6位)</span></label
+        >
         <validate-input
           type="password"
           placeholder="请输入密码"
@@ -100,9 +102,9 @@ export default defineComponent({
           createMessage('注册成功 正在跳转登录页面', 'success')
           setTimeout(() => {
             router.push('/login')
-          }, 1000)
+          }, 2000)
         }).catch(() => {
-          createMessage('用户名已被占用', 'error')
+          createMessage('注册失败! 原因可能是: 邮箱 或 昵称已被使用! 或 密码长度小于6位!', 'error')
         })
       }
     }
@@ -121,5 +123,8 @@ export default defineComponent({
 <style>
 .w-330 {
   max-width: 330px;
+}
+.password-lenght {
+  font-size: 5px;
 }
 </style>

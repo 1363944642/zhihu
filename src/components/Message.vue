@@ -31,7 +31,7 @@ export default defineComponent({
     }
   },
   // emits: ['close-message'],
-  setup(props, context) {
+  setup(props) {
     useDOMCreate('message')
     const isVisible = ref(true)
     const classObject = {
