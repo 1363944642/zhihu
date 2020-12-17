@@ -35,7 +35,7 @@ const routes: Array<RouteRecordRaw> = [
     path: '/user',
     name: 'user',
     component: Signup,
-    meta: { requiredUser: true }
+    meta: { redirectAlreadyLogin: true }
   },
   {
     path: '/posts/:id',

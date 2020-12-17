@@ -101,8 +101,8 @@ export default defineComponent({
           setTimeout(() => {
             router.push('/login')
           }, 1000)
-        }).catch(e => {
-          console.log(e)
+        }).catch(() => {
+          createMessage('用户名已被占用', 'error')
         })
       }
     }
