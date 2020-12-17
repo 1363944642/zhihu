@@ -42,28 +42,25 @@ export default defineComponent({
   setup() {
     const store = useStore<GlobalDataProps>()
     const route = useRoute()
-    const currentId = route.params.id
+    const currentId: any = route.params.id
 
     const size = computed(() => store.state.postsSize)
-    const totalPage = computed(() => store.state.posts.totalPage)
-    const page = computed(() => store.state.posts.page)
+    const totalPage = computed(() => store.state.posts.currentIdAndtotalPage[currentId])
+    const page = computed(() => store.state.posts.page[currentId])
     const loadedColumns = computed(() => store.state.posts.loadedColumns)
 
     onMounted(() => {
       store.dispatch('fetchColumn', currentId)
-
       if (!loadedColumns.value.includes(currentId)) {
-        page.value = store.getters.initializePotsPage()
+        store.getters.initializePotsPage(currentId)
         store.dispatch('fetchPosts', { cid: currentId, size: size.value }).then((data) => {
-          store.getters.getPotsTotalPage(Math.ceil(data.data.count / size.value))
+          store.getters.getPotsTotalPage(Math.ceil(data.data.count / size.value), currentId)
         })
       }
     })
 
     const loadMorePage = () => {
-      store.dispatch('fetchPosts', { cid: currentId, size: size.value }).then((data) => {
-        store.getters.getPotsTotalPage(Math.ceil(data.data.count / size.value))
-      })
+      store.dispatch('fetchPosts', { cid: currentId, size: size.value })
     }
 
     const isLastPage = computed(() => {

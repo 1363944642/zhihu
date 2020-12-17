@@ -100,7 +100,7 @@ export default defineComponent({
           createMessage('注册成功 正在跳转登录页面', 'success')
           setTimeout(() => {
             router.push('/login')
-          }, 2000)
+          }, 1000)
         }).catch(e => {
           console.log(e)
         })

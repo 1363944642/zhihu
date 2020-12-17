@@ -123,13 +123,13 @@ export default defineComponent({
           const actionName = isEditMode ? 'updatePost' : 'createPost'
           const sendData = isEditMode ? { id: route.query.id, payload: newPost } : newPost
           store.dispatch(actionName, sendData).then((rawData) => {
-            createMessage('发表成功, 2秒后跳转到文章页面', 'success', 2000)
+            createMessage('发表成功, 1秒后跳转到文章页面', 'success', 1000)
             setTimeout(() => {
               store.dispatch('fetchPosts', { cid: rawData.data.column, size: size.value, createPost: true }).then((data) => {
                 store.getters.getPotsTotalPage(Math.ceil(data.data.count / size.value))
               })
               router.push({ name: 'column', params: { id: column } })
-            }, 2000)
+            }, 1000)
           })
         }
       }

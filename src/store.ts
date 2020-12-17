@@ -10,7 +10,7 @@ export interface PostProps {
   title: string;
   excerpt?: string;
   content?: string;
-  image?: ImageProps;
+  image?: ImageProps | string;
   createdAt?: string;
   column: string;
   author?: string | UserProps;
@@ -36,7 +36,7 @@ export interface GlobalDataProps {
   loading: boolean;
   columns: { data: ColumnProps[]; isLoaded: boolean; page: number; totalPage: number };
   column: { data: ColumnProps[]; loadedColumns: any };
-  posts: { data: PostProps[]; loadedColumns: any; page: number; totalPage: number };
+  posts: { data: PostProps[]; loadedColumns: any; currentIdAndtotalPage: any; page: any; totalPage: number };
   user: UserProps;
   post: { data: PostProps[]; loadedColumns: any };
   postsSize: number;
@@ -78,7 +78,7 @@ const store = createStore<GlobalDataProps>({
     loading: false,
     columns: { data: [], isLoaded: true, page: 1, totalPage: 0 },
     column: { data: [], loadedColumns: [] },
-    posts: { data: [], loadedColumns: [], page: 1, totalPage: 0 },
+    posts: { data: [], loadedColumns: [], currentIdAndtotalPage: {} || 0, page: {} || 1, totalPage: 0 },
     user: { isLogin: false },
     post: { data: [], loadedColumns: [] },
     postsSize: 5,
@@ -103,7 +103,7 @@ const store = createStore<GlobalDataProps>({
     fetchPosts(state, { data, extraData }) {
       state.posts.data = [...state.posts.data, ...data.data.list]
       state.posts.loadedColumns.push(extraData)
-      state.posts.page++
+      state.posts.page[extraData]++
     },
     fetchPost(state, { data, extraData }) {
       state.post.data.push(data.data)
@@ -175,16 +175,17 @@ const store = createStore<GlobalDataProps>({
     },
     fetchPosts({ state, commit }, params = {}) {
       const { cid, size, deletePost, createPost } = params
+
       if (deletePost) {
         state.posts.data = []
-        state.posts.page = state.posts.page - 1
-        return asyncAbdCommit(`/columns/${cid}/posts?pageSize=${state.posts.page * size}`, 'fetchPosts', commit, { method: 'get' }, cid)
+        state.posts.page[cid] = state.posts.page[cid] - 1
+        return asyncAbdCommit(`/columns/${cid}/posts?pageSize=${state.posts.page[cid] * size}`, 'fetchPosts', commit, { method: 'get' }, cid)
       } else if (createPost) {
         state.posts.data = []
-        state.posts.page = state.posts.page - 1
-        return asyncAbdCommit(`/columns/${cid}/posts?pageSize=${state.posts.page * size}`, 'fetchPosts', commit, { method: 'get' }, cid)
+        state.posts.page[cid] = state.posts.page[cid] - 1
+        return asyncAbdCommit(`/columns/${cid}/posts?pageSize=${state.posts.page[cid] * size}`, 'fetchPosts', commit, { method: 'get' }, cid)
       } else {
-        return asyncAbdCommit(`/columns/${cid}/posts?currentPage=${state.posts.page}&pageSize=${size}`, 'fetchPosts', commit, { method: 'get' }, cid)
+        return asyncAbdCommit(`/columns/${cid}/posts?currentPage=${state.posts.page[cid]}&pageSize=${size}`, 'fetchPosts', commit, { method: 'get' }, cid)
       }
 
       // if (state.posts.data.length < 5) {
@@ -252,11 +253,12 @@ const store = createStore<GlobalDataProps>({
     getColumnTotalPage: (state) => (TotalPage: number) => {
       state.columns.totalPage = TotalPage
     },
-    getPotsTotalPage: (state) => (TotalPage: number) => {
+    getPotsTotalPage: (state) => (TotalPage: number, currentId: number) => {
       state.posts.totalPage = TotalPage
+      state.posts.currentIdAndtotalPage[currentId] = TotalPage
     },
-    initializePotsPage: (state) => () => {
-      state.posts.page = 1
+    initializePotsPage: (state) => (cid: number) => {
+      state.posts.page[cid] = 1
     }
   }
 })

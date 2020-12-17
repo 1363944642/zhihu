@@ -59,10 +59,10 @@ export default defineComponent({
           password: passwordVal.value
         }
         store.dispatch('loginAndFetch', payload).then(() => {
-          createMessage('登陆成功 2秒后跳转首页', 'success')
+          createMessage('登陆成功 1秒后跳转首页', 'success')
           setTimeout(() => {
             router.push('/')
-          }, 2000)
+          }, 1000)
         }).catch(e => {
           console.log(e)
         })

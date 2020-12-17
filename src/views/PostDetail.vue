@@ -41,7 +41,7 @@
       </div>
     </article>
     <modal
-      :title="删除文章"
+      title="删除文章"
       :visible="modalIsVisible"
       @modal-on-close="modalIsVisible = false"
       @modal-on-confirm="hideAndDelete"
@@ -59,6 +59,7 @@ import { useStore } from 'vuex'
 import userProfile from '../components/userProfile.vue'
 import Modal from '../components/Modal.vue'
 import createMessage from '../components/createMessage'
+import { ImageProps } from '../store'
 
 export default defineComponent({
   name: 'post-detail',
@@ -107,11 +108,11 @@ export default defineComponent({
     const hideAndDelete = () => {
       modalIsVisible.value = false
       store.dispatch('deletePost', postId).then((rawData) => {
-        createMessage('删除成功,2秒后跳转到专栏首页', 'success', 2000)
+        createMessage('删除成功,1秒后跳转到专栏首页', 'success', 1000)
         setTimeout(() => {
           store.dispatch('fetchPosts', { cid: rawData.data.column, size: size.value, deletePost: true })
           router.push(`/column/${rawData.data.column}`)
-        }, 2000)
+        }, 1000)
       })
     }
 

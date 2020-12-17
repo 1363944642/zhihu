@@ -58,11 +58,7 @@ export default defineComponent({
     })
 
     const loadMorePage = () => {
-      store.dispatch('fetchColumns', { size: size.value, isLoaded: true }).then(
-        (data) => {
-          totalPage.value = Math.ceil(data.data.count / size.value)
-        }
-      )
+      store.dispatch('fetchColumns', { size: size.value, isLoaded: true })
     }
 
     const isLastPage = computed(() => {

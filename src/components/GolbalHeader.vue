@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar navbar-dark bg-primary justify-content-between mb-4 px-4">
     <div class="w-75 mx-auto navbar">
-      <router-link to="/" class="navbar-brand" href="#">知乎专栏</router-link>
+      <router-link to="/" class="navbar-brand" href="#">迷路专栏</router-link>
       <ul v-if="!user.isLogin" class="list-inline mb-0">
         <li class="list-inline-item">
           <router-link to="/Login" class="btn btn-outline-light my-2"
@@ -21,12 +21,17 @@
               </router-link>
             </dropdown-item>
             <dropdown-item>
-              <router-link :to="`/column/${user.column}`" class="dropdown-item">
+              <router-link
+                :to="{ name: 'column', params: { id: user.column } }"
+                class="dropdown-item"
+              >
                 我的专栏
               </router-link>
             </dropdown-item>
-            <dropdown-item>
-              <a href="#" class="dropdown-item">编辑资料</a>
+            <dropdown-item :disabled="true">
+              <a href="#" class="dropdown-item"
+                >编辑资料<span class="not-opened">(功能暂未开放)</span></a
+              >
             </dropdown-item>
             <dropdown-item @click="logout">
               <a href="#" class="dropdown-item">退出登陆</a>
@@ -64,10 +69,10 @@ export default defineComponent({
     const router = useRouter()
     const logout = () => {
       store.commit('logout')
-      createMessage('退出成功 2秒后跳转首页', 'success')
+      createMessage('退出成功 1秒后跳转首页', 'success')
       setTimeout(() => {
         router.push('/')
-      }, 2000)
+      }, 1000)
     }
     return {
       logout
@@ -77,4 +82,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.not-opened {
+  font-size: 5px;
+}
 </style>
